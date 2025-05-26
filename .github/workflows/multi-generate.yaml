@@ -6,9 +6,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: install cowboy
-        run: sudo apt-get install cowboy -y
-      - name: generate dragon using cowboy
-        run: cowboy -f dragon "Run for cover, I am a dragon" >> dragon.txt
+        run: sudo apt-get install cowsay -y
+      - name: generate dragon using cowsay
+        run: cowsay -f dragon "Run for cover, I am a dragon" >> dragon.txt
 
   test:
     runs-on: ubuntu-latest
