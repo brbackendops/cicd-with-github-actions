@@ -1,0 +1,17 @@
+name: multiple-jobs-ascii
+on: push
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: install cowboy
+        run: sudo apt-install cowboy -y
+      - name: generate dragon using cowboy
+        run: cowboy -f dragon "Run for cover, I am a dragon" >> dragon.txt
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: test-dragon-exists
+        run: cat ./dragon.txt
