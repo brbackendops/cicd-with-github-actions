@@ -9,9 +9,19 @@ jobs:
         run: sudo apt-get install cowsay -y
       - name: generate dragon using cowsay
         run: cowsay -f dragon "Run for cover, I am a dragon" >> dragon.txt
+      - name: upload the artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dragon-text-file
+          path: dragon.txt
 
   test:
+    needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: download the artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dragon-text-file
       - name: test-dragon-exists
         run: cat ./dragon.txt
