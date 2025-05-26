@@ -4,6 +4,6 @@ jobs:
   runs-on: ubuntu-latest
   steps:
     - name: checkout codebase
-      run: actions/checkout@v3
+      uses: actions/checkout@v3
     - name: Executing script
       run: ./ascii-script.sh
