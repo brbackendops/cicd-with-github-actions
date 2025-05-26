@@ -9,4 +9,4 @@ jobs:
       - name: Executing script
         run: |
           chmod +x ascii-script.sh
-          ./ascii-script.shg
+          ./ascii-script.sh
