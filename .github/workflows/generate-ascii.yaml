@@ -7,4 +7,6 @@ jobs:
       - name: checkout codebase
         uses: actions/checkout@v3
       - name: Executing script
-        run: ./ascii-script.sh
+        run: |
+          chmod +x ascii-script.sh
+          ./ascii-script.shg
