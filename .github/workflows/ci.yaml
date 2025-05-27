@@ -90,6 +90,11 @@ jobs:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: List files for debugging
+        run: |
+          ls -la
+          pwd
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -98,7 +103,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ../../Dockerfile
+          file: Dockerfile
           push: true
           tags: ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
 
