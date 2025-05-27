@@ -1,5 +1,9 @@
 name: Context Testing
-on: push
+on:
+  push:
+    branches:
+      - main
+      - '!test/*'
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -14,8 +18,13 @@ jobs:
           JOB_CONTEXT: ${{ toJson(job) }}
         run: echo "$JOB_CONTEXT"
 
+      - name: dump runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJson(runner) }}
+        run: echo "$RUNNER_CONTEXT"
+
   check:
-    if: github.head_commit.author.name == 'AnonymousXDragon'
+    if: github.actor == 'AnonymousXDragon'
     runs-on: ubuntu-latest
     steps:
       - name: runner details
