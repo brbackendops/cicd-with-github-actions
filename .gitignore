@@ -3,5 +3,7 @@ node_modules
 solar-system.png
 .nyc_output
 .talismanrc
+*.env
+*.xml
 coverage
 test-results.xml
