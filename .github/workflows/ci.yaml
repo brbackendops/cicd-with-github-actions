@@ -30,3 +30,6 @@ jobs:
 
       - name: run test
         run: npm test
+
+      - name: status
+        run: echo "success"
