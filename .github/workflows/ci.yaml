@@ -122,4 +122,4 @@ jobs:
           echo $IP
           
           echo checking solar-system-app url using wget
-          wget -q -O - 127.0.0.1:8080/live | grep live
+          wget -q -O - 127.0.0.1:3000/live | grep live
