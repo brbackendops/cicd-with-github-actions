@@ -15,8 +15,6 @@ jobs:
 
   build_test:
     name: Build_and_Test
-    container:
-      image: ghcr.io/node-and-packages:20
     services:
       mongo-db:
         image: siddharth67/mongo-db:non-prod
