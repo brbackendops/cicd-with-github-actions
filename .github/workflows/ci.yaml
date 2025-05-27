@@ -15,8 +15,8 @@ jobs:
     name: Build_and_Test
     env:
       MONGO_URI: 'mongodb://localhost:27017/myappdb'
-      MONGO_USERNAME: non-prod-user
-      MONGO_PASSWORD: non-prod-password
+      MONGO_USERNAME: root
+      MONGO_PASSWORD: pwrd123
       NODE_ENV: dev
 
     services:
