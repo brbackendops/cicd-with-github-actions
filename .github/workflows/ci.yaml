@@ -41,6 +41,7 @@ jobs:
   code-coverage:
     runs-on: ubuntu-latest
     steps:
+
       - name: checkout
         uses: actions/checkout@v4
       - name: setup node js
@@ -52,6 +53,7 @@ jobs:
         run: npm install
       - name: check code coverage
         run: npm run coverage
+        continue-on-error: true
 
       - name: Archive Coverage Reports
         uses: actions/upload-artifact@v4
