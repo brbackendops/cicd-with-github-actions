@@ -30,7 +30,7 @@ jobs:
         run: echo "Connecting to $MONGO_URI as $MONGO_USERNAME"
 
       - name: unit testing
-        run: npm test
+        run: mocha app-test.js --timeout 10000 --reporter mocha-junit-reporter --exit
 
       - name: Archive Test Result
         uses: actions/upload-artifact@v4
