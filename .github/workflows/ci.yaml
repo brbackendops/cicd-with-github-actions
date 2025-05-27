@@ -5,16 +5,16 @@ on:
     branches:
       - main
       - dev
+env:
+  MONGO_URI: ${{ vars.MONGO_URI }}
+  MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
+  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
 jobs:
   build_test:
 #    strategy:
 #      matrix:
 #        versions: [18,20]
 #        os: [ubuntu-latest,windows-latest]
-    env:
-      MONGO_URI: ${{ vars.MONGO_URI }}
-      MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
-      MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
     runs-on: ubuntu-latest
     steps:
 
@@ -33,9 +33,6 @@ jobs:
 
       - name: debug
         run: echo "Connecting to $MONGO_URI as $MONGO_USERNAME"
-
-      - name: Test With Verbose
-        run: npm run test-debug
 
       - name: unit testing
         run: npm test
