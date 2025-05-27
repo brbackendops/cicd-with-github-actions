@@ -1,0 +1,15 @@
+name: Context Testing
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: runner details
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: dump step context
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: echo "$JOB_CONTEXT"

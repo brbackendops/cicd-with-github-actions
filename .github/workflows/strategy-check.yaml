@@ -8,6 +8,12 @@ jobs:
       matrix:
         os: [ ubuntu-latest , windows-latest ]
         images: [ alpine , hello-world ]
+        exclude:
+          - images: alpine
+            os: windows-latest
+        include:
+          - images: alpine
+            os: ubuntu-20.04
     runs-on: ${{ matrix.os }}
     steps:
       - name: running on ${{ matrix.os }}
