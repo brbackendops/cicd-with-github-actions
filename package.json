@@ -5,7 +5,7 @@
   "homepage": "https://www.linkedin.com/in/barahalikar-siddharth/",
   "license": "MIT",
   "scripts": {
-    "start": "node app.js",
+    "start": "node server.js",
     "test": "mocha app-test.js --timeout 10000 --reporter mocha-junit-reporter --exit",
     "coverage": "nyc --reporter cobertura --reporter lcov --reporter text --reporter json-summary  mocha app-test.js --timeout 10000  --exit"
   },
