@@ -11,11 +11,16 @@ env:
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
 jobs:
   build_test:
-#    strategy:
-#      matrix:
-#        versions: [18,20]
-#        os: [ubuntu-latest,windows-latest]
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        versions: [18,19,20]
+        os: [ubuntu-latest,windows-latest]
+        exclude:
+          - versions: 18
+            os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
 
       - name: checkout
@@ -23,18 +28,15 @@ jobs:
       - name: check files
         run: ls
 
-      - name: setup nodejs
+      - name: setup nodejs on ${{ matrix.os }}
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: ${{ matrix.versions }}
 
-      - name: install
+      - name: installing on ${{ matrix.os }}
         run: npm install
 
-      - name: debug
-        run: echo "Connecting to $MONGO_URI as $MONGO_USERNAME"
-
-      - name: unit testing
+      - name: unit testing on ${{ matrix.os }}
         run: npm test
 
       - name: Archive Test Result
