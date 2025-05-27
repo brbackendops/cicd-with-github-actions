@@ -11,16 +11,7 @@ env:
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
 jobs:
   build_test:
-    strategy:
-      fail-fast: false
-      max-parallel: 3
-      matrix:
-        versions: [18,19,20]
-        os: [ubuntu-latest,windows-latest]
-        exclude:
-          - versions: 18
-            os: ubuntu-latest
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
 
       - name: checkout
@@ -28,22 +19,43 @@ jobs:
       - name: check files
         run: ls
 
-      - name: setup nodejs on ${{ matrix.os }}
+      - name: setup nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.versions }}
+          node-version: 18
 
-      - name: installing on ${{ matrix.os }}
+      - name: installing
         run: npm install
 
-      - name: unit testing on ${{ matrix.os }}
+      - name: unit testing
         run: npm test
 
-      - name: Archive Test Result on ${{ matrix.os }} ${{ matrix.versions }}
+      - name: Archive Test Result
         uses: actions/upload-artifact@v4
         with:
-          name: mocha-test-results-${{ matrix.os }}-${{ matrix.versions }}
+          name: mocha-test-results
           path: test-results.xml
 
       - name: status
         run: echo "success"
+  code-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: setup node js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: install
+        run: npm install
+      - name: check code coverage
+        run: npm run coverage
+
+      - name: Archive Coverage Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: coverage
+          retention-days: 5
