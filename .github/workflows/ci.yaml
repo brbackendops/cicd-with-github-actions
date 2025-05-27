@@ -51,6 +51,9 @@ jobs:
       - name: installing
         run: npm install
 
+      - name: test debug
+        run: npm run test-debug
+
       - name: unit testing
         id: unit-test-1
         run: npm test
