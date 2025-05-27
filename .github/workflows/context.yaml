@@ -4,7 +4,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: runner details
+      - name: github details
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
@@ -13,3 +13,12 @@ jobs:
         env:
           JOB_CONTEXT: ${{ toJson(job) }}
         run: echo "$JOB_CONTEXT"
+
+  check:
+    if: github.head_commit.author.name == 'AnonymousXDragon'
+    runs-on: ubuntu-latest
+    steps:
+      - name: runner details
+        env:
+          RUNNER: ${{ toJson(runner) }}
+        run: echo "$RUNNER"
