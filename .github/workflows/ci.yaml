@@ -25,5 +25,7 @@ jobs:
       - name: install
         run: npm install
 
+      - name: debug
+        run: echo '$MONGO_URI - $MONGO_USERNAME'
       - name: run test
         run: npm run test
