@@ -34,6 +34,9 @@ jobs:
       - name: debug
         run: echo "Connecting to $MONGO_URI as $MONGO_USERNAME"
 
+      - name: Test With Verbose
+        run: npm run test-debug
+
       - name: unit testing
         run: npm test
 
