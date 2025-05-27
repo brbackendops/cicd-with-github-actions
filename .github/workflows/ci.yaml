@@ -39,10 +39,10 @@ jobs:
       - name: unit testing on ${{ matrix.os }}
         run: npm test
 
-      - name: Archive Test Result
+      - name: Archive Test Result on ${{ matrix.os }} ${{ matrix.versions }}
         uses: actions/upload-artifact@v4
         with:
-          name: mocha-test-results
+          name: mocha-test-results-${{ matrix.os }}-${{ matrix.versions }}
           path: test-results.xml
 
       - name: status
