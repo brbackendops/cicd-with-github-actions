@@ -5,15 +5,14 @@ on:
     branches:
       - main
       - dev
-env:
-  MONGO_URI: 'mongodb+srv://cluster0.vihfcne.mongodb.net/myappdb?authSource=admin&retryWrites=true&w=majority'
-  MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
-  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
 jobs:
   build_test:
+    env:
+      MONGO_URI: ${{ vars.MONGO_URI }}
+      MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
+      MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
     runs-on: ubuntu-latest
     steps:
-
       - name: checkout
         uses: actions/checkout@v4
 
