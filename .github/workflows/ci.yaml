@@ -24,6 +24,12 @@ jobs:
         with:
           node-version: 18
 
+      - name: Cache NPM dependencies
+        uses: actions/cache@v4
+        with:
+          path:  node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+
       - name: installing
         run: npm install
 
@@ -39,7 +45,9 @@ jobs:
           path: test-results.xml
 
       - name: status
+        if: always()
         run: echo "success"
+
   code-coverage:
     runs-on: ubuntu-latest
     steps:
@@ -51,8 +59,15 @@ jobs:
         with:
           node-version: 18
 
+      - name: Cache NPM dependencies
+        uses: actions/cache@v4
+        with:
+          path:  node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+
       - name: install
         run: npm install
+
       - name: check code coverage
         run: npm run coverage
         continue-on-error: true
