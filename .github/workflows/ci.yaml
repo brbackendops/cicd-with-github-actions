@@ -91,7 +91,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Docker Build And Push
-        uses: docker/docker-push@v3
+        uses: docker/docker-push@v4
         with:
           context: .
           push: true
@@ -112,5 +112,3 @@ jobs:
           
           echo checking url using wget
           wget -q -o 127.0.0.1:8080/live | grep  live
-
-
