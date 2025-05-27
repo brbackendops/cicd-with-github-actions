@@ -26,6 +26,7 @@ jobs:
         run: npm install
 
       - name: debug
-        run: echo '$MONGO_URI - $MONGO_USERNAME'
+        run: echo "Connecting to $MONGO_URI as $MONGO_USERNAME"
+
       - name: run test
         run: npm run test
