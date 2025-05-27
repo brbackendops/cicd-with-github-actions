@@ -13,20 +13,19 @@ env:
 jobs:
   build_test:
     name: Build_and_Test
-    env:
-      MONGO_URI: 'mongodb://localhost:27017/myappdb'
-      MONGO_USERNAME: root
-      MONGO_PASSWORD: pwrd123
-      NODE_ENV: dev
-
     services:
       mongo-db:
-        image: mongo
+        image: siddharth67/mongo-db:non-prod
         env:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: pwrd123
+          MONGO_INITDB_ROOT_USERNAME: non-prod-user
+          MONGO_INITDB_ROOT_PASSWORD: non-prod-password
         ports:
           - 27017:27017
+    env:
+      MONGO_URI: mongodb://localhost:27017/myappdb
+      MONGO_USERNAME: non-prod-user
+      MONGO_PASSWORD: non-prod-password
+      NODE_ENV: dev
 
     runs-on: ubuntu-latest
     steps:
