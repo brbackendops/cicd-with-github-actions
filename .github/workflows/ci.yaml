@@ -15,10 +15,11 @@ jobs:
     name: Build_and_Test
     services:
       mongo-db:
-        image: siddharth67/mongo-db:non-prod
+        image: mongo:latest
         env:
           MONGO_INITDB_ROOT_USERNAME: non-prod-user
           MONGO_INITDB_ROOT_PASSWORD: non-prod-password
+          MONGO_INITDB_DATABASE: myappdb
         ports:
           - 27017:27017
     env:
