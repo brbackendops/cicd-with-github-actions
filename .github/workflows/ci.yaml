@@ -90,7 +90,11 @@ jobs:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Docker Build And Push
+        id: docker-build-push-1
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -98,6 +102,7 @@ jobs:
           tags: ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
 
       - name: Docker Image Testing
+        if: success() && steps.docker-build-push-1.outcome == 'success'
         run: |
           docker images
           docker run --name solar-system-app -d \
