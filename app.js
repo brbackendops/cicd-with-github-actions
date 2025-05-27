@@ -35,8 +35,8 @@ var dataSchema = new Schema({
     velocity: String,
     distance: String
 });
-var planetModel = mongoose.model('planets', dataSchema);
 
+var planetModel = mongoose.model('planets', dataSchema);
 
 
 app.post('/planet',   function(req, res) {
