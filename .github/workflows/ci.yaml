@@ -112,7 +112,7 @@ jobs:
         run: |
           docker images
           docker run --name solar-system-app -d \
-            -p 8080:3000 \
+            -p 3000:3000 \
             -e MONGO_URI=$MONGO_URI \ 
             -e MONGO_USERNAME=$MONGO_USERNAME \
             -e MONGO_PASSWORD=$MONGO_PASSWORD \
@@ -122,4 +122,4 @@ jobs:
           echo $IP
           
           echo checking solar-system-app url using wget
-          wget -q -o - 127.0.0.1:8080/live | grep  live
+          wget -q -O - 127.0.0.1:8080/live | grep live
