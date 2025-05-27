@@ -6,7 +6,7 @@ on:
       - main
       - dev
 env:
-  MONGO_URI: 'mongodb+srv://cluster0.vihfcne.mongodb.net/myappdb?retryWrites=true&w=majority'
+  MONGO_URI: 'mongodb+srv://cluster0.vihfcne.mongodb.net/myappdb'
   MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
 jobs:
