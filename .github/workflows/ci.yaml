@@ -97,7 +97,7 @@ jobs:
         id: docker-build-push-1
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./Dockerfile
           push: true
           tags: ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
 
