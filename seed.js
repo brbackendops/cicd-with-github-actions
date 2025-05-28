@@ -17,7 +17,7 @@ const Planet = mongoose.model('Planet', dataSchema);
 async function connectToDatabase() {
     const mongoUri = process.env.MONGO_URI
     try {
-        console.log(`🔄 Attempting to connect to MongoDB (attempt ${attempt}/${maxRetries})...`);
+        console.log(`🔄 Attempting to connect to MongoDB `);
 
         await mongoose.connect(mongoUri, {
             user: process.env.MONGO_USERNAME,
