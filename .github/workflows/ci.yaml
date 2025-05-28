@@ -9,7 +9,7 @@ env:
   MONGO_URI: ${{ vars.MONGO_URI }}
   MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-  NODE_ENV: dev
+  NODE_ENV: test
 jobs:
   build_test:
     name: Build_and_Test
@@ -26,7 +26,7 @@ jobs:
       MONGO_URI: mongodb://localhost:27017/myappdb?authSource=admin
       MONGO_USERNAME: non-prod-user
       MONGO_PASSWORD: non-prod-password
-      NODE_ENV: dev
+      NODE_ENV: test
 
     runs-on: ubuntu-latest
     steps:

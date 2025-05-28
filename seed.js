@@ -15,7 +15,7 @@ var dataSchema = new Schema({
 const Planet = mongoose.model('Planet', dataSchema);
 
 // Seed function to populate planets data
-exports.seedPlanets = async () => {
+seedPlanets = async () => {
     try {
         // Check if data already exists
         const count = await Planet.countDocuments();
@@ -94,3 +94,17 @@ exports.seedPlanets = async () => {
         console.error('❌ Error seeding planets:', error);
     }
 };
+
+
+async function runSeed() {
+    try {
+        await seedPlanets()
+        console.log('✅ Planets seeded successfully');
+        process.exit(0)
+    } catch (error) {
+        console.error('❌ Error seeding planets:', error);
+        process.exit(1)
+    }
+}
+
+runSeed();
