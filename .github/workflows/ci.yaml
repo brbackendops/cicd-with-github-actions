@@ -71,14 +71,32 @@ jobs:
 
   code-coverage:
     runs-on: ubuntu-latest
+    container:
+      image: node:18
+    services:
+      mongo-db:
+        image: mongo:latest
+        options:
+          --name mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: non-prod-user
+          MONGO_INITDB_ROOT_PASSWORD: non-prod-password
+          MONGO_INITDB_DATABASE: myappdb
+    env:
+      MONGO_URI: mongodb://mongo:27017/myappdb?authSource=admin
+      MONGO_USERNAME: non-prod-user
+      MONGO_PASSWORD: non-prod-password
+      NODE_ENV: test
     steps:
-
       - name: checkout
         uses: actions/checkout@v4
-      - name: setup node js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
+
+      - name: seed
+        run: node ./seed.js
+#      - name: setup node js
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version: 18
 
       - name: Cache NPM dependencies
         uses: actions/cache@v4
