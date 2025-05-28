@@ -16,23 +16,24 @@ const Planet = mongoose.model('Planet', dataSchema);
 
 async function connectToDatabase() {
     const mongoUri = process.env.MONGO_URI
-        try {
-            console.log(`🔄 Attempting to connect to MongoDB (attempt ${attempt}/${maxRetries})...`);
+    try {
+        console.log(`🔄 Attempting to connect to MongoDB (attempt ${attempt}/${maxRetries})...`);
 
-            await mongoose.connect(mongoUri, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true,
-                serverSelectionTimeoutMS: 30000,
-                connectTimeoutMS: 30000,
-                socketTimeoutMS: 30000,
-            });
+        await mongoose.connect(mongoUri, {
+            user: process.env.MONGO_USERNAME,
+            pass: process.env.MONGO_PASSWORD,
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 30000,
+            connectTimeoutMS: 30000,
+            socketTimeoutMS: 30000,
+        });
 
-            console.log('✅ Connected to MongoDB successfully');
-            return;
-        } catch (error) {
-            console.log(`❌ Connection attempt ${attempt} failed:`, error.message);
-            throw new Error(`Failed to connect to MongoDB after ${maxRetries} attempts: ${error.message}`);
-        }
+        console.log('✅ Connected to MongoDB successfully');
+        return;
+    } catch (error) {
+        console.log(`❌ Connection attempt ${attempt} failed:`, error.message);
+        throw new Error(`Failed to connect to MongoDB after ${maxRetries} attempts: ${error.message}`);
     }
 }
 
