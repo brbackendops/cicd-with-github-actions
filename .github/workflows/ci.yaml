@@ -52,7 +52,7 @@ jobs:
         run: npm install
 
       - name: seed data
-        run: node -e "require('./seed.js')"
+        run: node ./seed.js
       - name: test debug
         run: npm run test-debug
 
