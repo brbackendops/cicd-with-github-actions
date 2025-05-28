@@ -91,8 +91,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: seed
-        run: node ./seed.js
 #      - name: setup node js
 #        uses: actions/setup-node@v3
 #        with:
@@ -106,6 +104,9 @@ jobs:
 
       - name: install
         run: npm install
+
+      - name: seed
+        run: node ./seed.js
 
       - name: check code coverage
         run: npm run coverage
