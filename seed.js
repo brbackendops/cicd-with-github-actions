@@ -32,8 +32,8 @@ async function connectToDatabase() {
         console.log('✅ Connected to MongoDB successfully');
         return;
     } catch (error) {
-        console.log(`❌ Connection attempt ${attempt} failed:`, error.message);
-        throw new Error(`Failed to connect to MongoDB after ${maxRetries} attempts: ${error.message}`);
+        console.log(`❌ Connection attempt failed:`, error.message);
+        throw new Error(`Failed to connect to MongoDB : ${error.message}`);
     }
 }
 
