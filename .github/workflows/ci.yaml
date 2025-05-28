@@ -53,8 +53,6 @@ jobs:
 
       - name: seed data
         run: node ./seed.js
-      - name: test debug
-        run: npm run test-debug
 
       - name: unit testing
         id: unit-test-1
