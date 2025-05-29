@@ -188,6 +188,7 @@ jobs:
 
   integration-test:
     name: Integration Test
+    runs-on: ubuntu-latest
     needs: dev-deploy
     if: github.ref == 'refs/head/dev'
     steps:
