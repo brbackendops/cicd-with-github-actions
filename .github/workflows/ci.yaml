@@ -198,15 +198,16 @@ jobs:
       - name: installing ingress-controller on k8s
         continue-on-error: true
         run: |
-          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/kind/deploy.yaml
           
       - name: Wait for ingress-nginx-controller pod
         run: |
-          echo "Waiting for ingress controller pod to be ready..."
           kubectl wait --namespace ingress-nginx \
-            --for=condition=Ready pod \
-            --selector=app.kubernetes.io/component=controller \
-            --timeout=70s
+              --for=condition=complete job/ingress-nginx-admission-create \
+              --timeout=120s || true
+          kubectl wait --namespace ingress-nginx \
+              --for=condition=complete job/ingress-nginx-admission-patch \
+              --timeout=120s || true
 
       - name: Wait for webhook Job to complete
         run: |
