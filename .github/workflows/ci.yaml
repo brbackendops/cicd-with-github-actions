@@ -180,16 +180,11 @@ jobs:
     needs: docker
     runs-on: ubuntu-latest
     steps:
-      - name: configuring kube config file
-        uses: azure/k8s-set-context@v3
-        with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
-      - name: installing kubectl
-        uses: azure/setup-kubectl@v4
+      - name: configuring k8 environment
+        uses: helm/kind-action@v1.4.0
         with:
-          version: 'v1.26.0'
+          cluster_name: test-cluster
 
       - name: test environment
         run: |
