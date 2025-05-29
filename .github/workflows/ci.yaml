@@ -128,12 +128,12 @@ jobs:
     continue-on-error: true
     steps:
       - name: download test report
-        uses: actions/download-artifact@v3.0.2
+        uses: actions/download-artifact@v3
         with:
           name: mocha-test-results
 
       - name: download code coverage report
-        uses: actions/download-artifact@v3.0.2
+        uses: actions/download-artifact@v3
         with:
           name: code-coverage-report
 
