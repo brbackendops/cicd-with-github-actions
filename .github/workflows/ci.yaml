@@ -189,6 +189,7 @@ jobs:
     secrets:
       mongodb-password: ${{ secrets.MONGO_PASSWORD }}
     with:
+      environment: development
       mongodb-uri: ${{ vars.MONGO_URI }}
 
   integration-test:
