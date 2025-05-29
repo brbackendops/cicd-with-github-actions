@@ -199,6 +199,15 @@ jobs:
         run: |
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
           
+          kubectl wait --namespace ingress-nginx \
+              --for=condition=ready pod \
+              --selector=app.kubernetes.io/component=controller \
+              --timeout=300s
+          
+          echo "Waiting for admission webhook..."
+          kubectl wait --namespace ingress-nginx \
+              --for=condition=available deployment/ingress-nginx-controller \
+              --timeout=300s
 #          kubectl wait -n ingress-nginx \
 #              --for=condition=ready pod \
 #              --timeout=15s
@@ -230,17 +239,7 @@ jobs:
 
       - name: creating deployment
         run: |          
-          kubectl apply -f kubernetes/development
-          
-          kubectl wait --namespace ingress-nginx \
-              --for=condition=ready pod \
-              --selector=app.kubernetes.io/component=controller \
-              --timeout=300s
-          
-          echo "Waiting for admission webhook..."
-          kubectl wait --namespace ingress-nginx \
-              --for=condition=available deployment/ingress-nginx-controller \
-              --timeout=300s          
+          kubectl apply -f kubernetes/development                
           
           kubectl get pods -n ${{ vars.NAMESPACE }} -o wide
           kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80 &
