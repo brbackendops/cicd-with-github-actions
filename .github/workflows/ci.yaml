@@ -10,6 +10,7 @@ env:
   MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
   NODE_ENV: test
+  GITHUB_CONTEXT: ${{ toJson(github) }}
 jobs:
 
   build_test:
@@ -192,7 +193,6 @@ jobs:
     name: Integration Test
     runs-on: ubuntu-latest
     needs: dev-deploy
-    if: github.ref == 'refs/head/dev'
     steps:
       - name: test
-        run: echo test
+        run: echo '$GITHUB_CONTEXT'
