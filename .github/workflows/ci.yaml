@@ -182,7 +182,7 @@ jobs:
 
 
   dev-deploy:
-    name: Deployment
+    name: Dev-Deployment
     needs: [docker]
 #    if: github.ref == 'refs/head/dev'
     uses: ./.github/workflows/reusable-workflow.yaml
@@ -192,8 +192,20 @@ jobs:
       environment: development
       mongodb-uri: ${{ vars.MONGO_URI }}
 
+  prod-deploy:
+    name: Prod-Deployment
+    needs: [dev-deploy]
+    #    if: github.ref == 'refs/head/dev'
+    uses: ./.github/workflows/reusable-workflow.yaml
+    secrets:
+      mongodb-password: ${{ secrets.MONGO_PASSWORD }}
+    with:
+      environment: production
+      mongodb-uri: ${{ vars.MONGO_URI }}
+
   integration-test:
     name: Integration Test
+    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     needs: dev-deploy
     steps:
