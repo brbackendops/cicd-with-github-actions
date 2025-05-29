@@ -180,7 +180,16 @@ jobs:
     needs: docker
     runs-on: ubuntu-latest
     steps:
+      - name: configuring kubeconfig
+        run: |
+          mkdir -p ~./kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d  > ~./kube/config
+
       - name: installing kubectl
         uses: azure/setup-kubectl@v4
         with:
           version: 'v1.26.0'
+
+      - name: test environment
+        run: |
+          kubectl get nodes
