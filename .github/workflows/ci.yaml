@@ -174,3 +174,13 @@ jobs:
           
           echo checking solar-system-app url using wget
           wget -q -O - 127.0.0.1:3000/live | grep live
+
+  dev-deploy:
+    name: Deployment
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: installing kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.26.0'
