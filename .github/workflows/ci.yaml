@@ -182,6 +182,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: configuring k8 environment
         uses: helm/kind-action@v1.4.0
         with:
@@ -194,14 +197,20 @@ jobs:
       - name: installing ingress-controller on k8s
         run: |
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+          
+          kubectl wait -n ingress-nginx \
+              --for=condition=ready pod \
+              --timeout=15s
           kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80 &
 
       - name: create secrets
         run: |
-          kubectl create secret generic mongo-db-creds \
+          kubectl -n ${{ vars.NAMESPACE }} create secret generic mongo-db-creds \
               --from-literal=MONGO_URI=${{ vars.MONGO_URI }} \
               --from-literal=MONGO_USERNAME=${{ vars.MONGO_USERNAME }} \
-              --from-literal=MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}
+              --from-literal=MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }} \
+              --dry-run=client \
+              -o yaml | kubectl create -f -
 
       - name: Replace Token in manifest files
         uses: cschleiden/replace-tokens@v1
