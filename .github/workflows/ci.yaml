@@ -225,8 +225,12 @@ jobs:
         env:
           NAMESPACE: ${{ vars.NAMESPACE }}
           REPLICAS: ${{ vars.REPLICAS }}
-          IMAGE: ${{env.DOCKER_USERNAME}}/solar-system:${{github.sha}}
+          IMAGE: ${{vars.DOCKER_USERNAME}}/solar-system:${{github.sha}}
           INGRESS_IP: "localhost:8080"
+
+      - name: creating deployment
+        run: |
+          kubectl apply -f ./kubernetes/development/deployment.yaml
 
   integration-test:
     name: Integration Test
