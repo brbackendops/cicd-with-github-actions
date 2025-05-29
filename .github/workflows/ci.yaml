@@ -188,6 +188,8 @@ jobs:
     uses: ./.github/workflows/reusable-workflow.yaml
     secrets:
       mongodb-password: ${{ secrets.MONGO_PASSWORD }}
+    with:
+      mongodb-uri: ${{ env.MONGO_URI }}
 
   integration-test:
     name: Integration Test

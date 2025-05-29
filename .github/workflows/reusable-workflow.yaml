@@ -1,13 +1,23 @@
 name: Reusable Workflow For Deployment
 on:
   workflow_call:
+    inputs:
+      mongodb-uri:
+        type: string
+        required: true
+      environment:
+        type: string
+        required: true
+        description: provide the deployment environment
+        default: development
     secrets:
       mongodb-password:
         required: true
 jobs:
   resuse-deploy:
+    name: ${{ inputs.environment }} - deploy
     environment:
-      name: development
+      name: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
 
@@ -27,7 +37,7 @@ jobs:
         run: |
           kubectl create namespace ${{ vars.NAMESPACE }}
           kubectl -n ${{ vars.NAMESPACE }} create secret generic mongo-db-creds \
-              --from-literal=MONGO_URI="${{ vars.MONGO_URI }}" \
+              --from-literal=MONGO_URI="${{ inputs.MONGO_URI }}" \
               --from-literal=MONGO_USERNAME="${{ vars.MONGO_USERNAME }}" \
               --from-literal=MONGO_PASSWORD="${{ secrets.mongodb-password }}" \
               --dry-run=client \
