@@ -226,3 +226,11 @@ jobs:
           REPLICAS: ${{ vars.REPLICAS }}
           IMAGE: ${{env.DOCKER_USERNAME}}/solar-system:${{github.sha}}
           INGRESS_IP: "localhost:8080"
+
+  integration-test:
+    name: Integration Test
+    needs: dev-deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: test
+        run: echo test
