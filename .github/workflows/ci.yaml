@@ -11,6 +11,7 @@ env:
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
   NODE_ENV: test
 jobs:
+
   build_test:
     name: Build_and_Test
     services:
@@ -206,12 +207,13 @@ jobs:
       - name: create secrets
         run: |
           kubectl -n ${{ vars.NAMESPACE }} create secret generic mongo-db-creds \
-              --from-literal=MONGO_URI=${{ vars.MONGO_URI }} \
-              --from-literal=MONGO_USERNAME=${{ vars.MONGO_USERNAME }} \
-              --from-literal=MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }} \
+              --from-literal=MONGO_URI="${{ vars.MONGO_URI }}" \
+              --from-literal=MONGO_USERNAME="${{ vars.MONGO_USERNAME }}" \
+              --from-literal=MONGO_PASSWORD="${{ secrets.MONGO_PASSWORD }}" \
               --dry-run=client \
-              -o yaml | kubectl create -f -
-          kubectl get secrets -n ${{ vars.NAMESPACE }} mongo-db-creds -o yam
+              -o yaml | kubectl apply -f -
+          
+          kubectl get secrets -n ${{ vars.NAMESPACE }} mongo-db-creds -o yaml
 
       - name: Replace Token in manifest files
         uses: cschleiden/replace-tokens@v1
