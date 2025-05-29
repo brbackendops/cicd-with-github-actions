@@ -179,55 +179,17 @@ jobs:
 
   dev-deploy:
     name: Deployment
+    if: github.ref == 'refs/head/dev'
     needs: docker
-    runs-on: ubuntu-latest
-    steps:
+    uses: ./.github/workflows/reusable-workflow.yaml
+    secrets:
+      mongodb-password: ${{ secrets.MONGO_PASSWORD }}
 
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: configuring k8 environment
-        uses: helm/kind-action@v1.4.0
-        with:
-          cluster_name: test-cluster
-
-      - name: test environment
-        run: |
-          kubectl get nodes
-
-      - name: create secrets
-        run: |
-          kubectl create namespace ${{ vars.NAMESPACE }}
-          kubectl -n ${{ vars.NAMESPACE }} create secret generic mongo-db-creds \
-              --from-literal=MONGO_URI="${{ vars.MONGO_URI }}" \
-              --from-literal=MONGO_USERNAME="${{ vars.MONGO_USERNAME }}" \
-              --from-literal=MONGO_PASSWORD="${{ secrets.MONGO_PASSWORD }}" \
-              --dry-run=client \
-              -o yaml | kubectl apply -f -
-          
-          kubectl get secrets -n ${{ vars.NAMESPACE }} mongo-db-creds -o yaml
-
-      - name: Replace Token in manifest files
-        uses: cschleiden/replace-tokens@v1
-        with:
-          tokenPrefix: '_{_'
-          tokenSuffix: '_}_'
-          files: '["kubernetes/development/*.yaml"]'
-        env:
-          NAMESPACE: ${{ vars.NAMESPACE }}
-          REPLICAS: ${{ vars.REPLICAS }}
-          IMAGE: ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
-          INGRESS_IP: "localhost"
-
-      - name: creating deployment
-        run: |
-          kubectl apply -f kubernetes/development                          
-          kubectl get pods -n ${{ vars.NAMESPACE }} -o wide
 
   integration-test:
     name: Integration Test
     needs: dev-deploy
-    runs-on: ubuntu-latest
+    if: github.ref == 'refs/head/dev'
     steps:
       - name: test
         run: echo test
