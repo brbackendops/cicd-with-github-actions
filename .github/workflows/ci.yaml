@@ -175,6 +175,7 @@ jobs:
           echo checking solar-system-app url using wget
           wget -q -O - 127.0.0.1:3000/live | grep live
 
+
   dev-deploy:
     name: Deployment
     needs: docker
@@ -189,3 +190,31 @@ jobs:
       - name: test environment
         run: |
           kubectl get nodes
+
+      - name: installing ingress-controller on k8s
+        run: |
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+          kubectl wait -n ingress-nginx \
+             --for=condition=ready pod \
+             --selector=app.kubernetes.io/component=controller \
+             --timeout=15s
+          kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80 &
+
+      - name: create secrets
+        run: |
+          kubectl create secret generic mongo-db-creds \
+              --from-literal=MONGO_URI=${{ vars.MONGO_URI }} \
+              --from-literal=MONGO_USERNAME=${{ vars.MONGO_USERNAME }} \
+              --from-literal=MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}
+
+      - name: Replace Token in manifest files
+        uses: cschleiden/replace-tokens@v1
+        with:
+          tokenPrefix: '__{__'
+          tokenSuffix: '__}__'
+          files: '["kubernetes/development/*.yaml"]'
+        env:
+          NAMESPACE: ${{ vars.NAMESPACE }}
+          REPLICAS: ${{ vars.REPLICAS }}
+          IMAGE: ${{env.DOCKER_USERNAME}}/solar-system:${{github.sha}}
+          INGRESS_IP: "localhost:8080"
