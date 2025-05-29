@@ -1,4 +1,5 @@
 node_modules
+kubernetes/development/ingress.yaml
 .idea
 solar-system.png
 .nyc_output
