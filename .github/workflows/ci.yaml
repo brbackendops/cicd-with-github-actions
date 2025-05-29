@@ -198,10 +198,10 @@ jobs:
         run: |
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
           
-          kubectl wait -n ingress-nginx \
-              --for=condition=ready pod \
-              --timeout=15s
-          kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80 &
+#          kubectl wait -n ingress-nginx \
+#              --for=condition=ready pod \
+#              --timeout=15s
+#          kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80 &
 
       - name: create secrets
         run: |
@@ -211,6 +211,7 @@ jobs:
               --from-literal=MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }} \
               --dry-run=client \
               -o yaml | kubectl create -f -
+          kubectl get secrets -n ${{ vars.NAMESPACE }} mongo-db-creds -o yam
 
       - name: Replace Token in manifest files
         uses: cschleiden/replace-tokens@v1
