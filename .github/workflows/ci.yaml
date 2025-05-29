@@ -219,13 +219,13 @@ jobs:
       - name: Replace Token in manifest files
         uses: cschleiden/replace-tokens@v1
         with:
-          tokenPrefix: '__{__'
-          tokenSuffix: '__}__'
+          tokenPrefix: '_{_'
+          tokenSuffix: '_}_'
           files: '["kubernetes/development/*.yaml"]'
         env:
           NAMESPACE: ${{ vars.NAMESPACE }}
           REPLICAS: ${{ vars.REPLICAS }}
-          IMAGE: ${{vars.DOCKER_USERNAME}}/solar-system:${{github.sha}}
+          IMAGE: ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
           INGRESS_IP: "localhost:8080"
 
       - name: creating deployment
