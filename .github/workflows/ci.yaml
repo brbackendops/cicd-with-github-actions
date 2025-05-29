@@ -230,7 +230,7 @@ jobs:
 
       - name: creating deployment
         run: |
-          kubectl apply -f ./kubernetes/development/deployment.yaml
+          kubectl apply -f kubernetes/development
 
   integration-test:
     name: Integration Test
