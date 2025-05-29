@@ -202,12 +202,12 @@ jobs:
           kubectl wait --namespace ingress-nginx \
               --for=condition=ready pod \
               --selector=app.kubernetes.io/component=controller \
-              --timeout=300s
+              --timeout=50s
           
           echo "Waiting for admission webhook..."
           kubectl wait --namespace ingress-nginx \
               --for=condition=available deployment/ingress-nginx-controller \
-              --timeout=300s
+              --timeout=50s
 #          kubectl wait -n ingress-nginx \
 #              --for=condition=ready pod \
 #              --timeout=15s
