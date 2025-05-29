@@ -1,0 +1,213 @@
+name: Workflow
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - dev
+env:
+  MONGO_URI: ${{ vars.MONGO_URI }}
+  MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
+  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+  NODE_ENV: test
+  GITHUB_CONTEXT: ${{ toJson(github) }}
+jobs:
+
+  build_test:
+    name: Build_and_Test
+    services:
+      mongo-db:
+        image: mongo:latest
+        env:
+          MONGO_INITDB_ROOT_USERNAME: non-prod-user
+          MONGO_INITDB_ROOT_PASSWORD: non-prod-password
+          MONGO_INITDB_DATABASE: myappdb
+        ports:
+          - 27017:27017
+    env:
+      MONGO_URI: mongodb://localhost:27017/myappdb?authSource=admin
+      MONGO_USERNAME: non-prod-user
+      MONGO_PASSWORD: non-prod-password
+      NODE_ENV: test
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: check files
+        run: ls
+
+      - name: setup nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+
+      - name: installing
+        run: npm install
+
+      - name: seed data
+        run: node ./seed.js
+
+      - name: unit testing
+        id: unit-test-1
+        run: npm test
+
+      - name: Archive Test Result
+        if: success() && steps.unit-test-1.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mocha-test-results
+          path: test-results.xml
+
+      - name: status
+        if: always()
+        run: echo "success"
+
+  code-coverage:
+    runs-on: ubuntu-latest
+    container:
+      image: node:18
+    services:
+      mongo-db:
+        image: mongo:latest
+        options:
+          --name mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: non-prod-user
+          MONGO_INITDB_ROOT_PASSWORD: non-prod-password
+          MONGO_INITDB_DATABASE: myappdb
+    env:
+      MONGO_URI: mongodb://mongo:27017/myappdb?authSource=admin
+      MONGO_USERNAME: non-prod-user
+      MONGO_PASSWORD: non-prod-password
+      NODE_ENV: test
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+#      - name: setup node js
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version: 18
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+
+      - name: install
+        run: npm install
+
+      - name: seed
+        run: node ./seed.js
+
+      - name: check code coverage
+        run: npm run coverage
+        continue-on-error: true
+
+      - name: Archive Coverage Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: coverage
+          retention-days: 5
+
+  docker:
+    name: Building and Testing Containerization
+    runs-on: ubuntu-latest
+    needs: [ build_test,code-coverage ]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+
+      - name: checkout sourcecode
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker Build And Push
+        id: docker-build-push-1
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/solar-system:${{ github.sha }}
+
+      - name: Docker Image Testing
+        if: success() && steps.docker-build-push-1.outcome == 'success'
+        run: |
+          docker images
+          docker run --name solar-system-app -d \
+            -p 3000:3000 \
+            -e MONGO_URI=$MONGO_URI \
+            -e MONGO_USERNAME=$MONGO_USERNAME \
+            -e MONGO_PASSWORD=$MONGO_PASSWORD \
+            ${{ vars.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
+          
+          export IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' solar-system-app)
+          echo $IP
+          
+          echo checking solar-system-app url using wget
+          wget -q -O - 127.0.0.1:3000/live | grep live
+
+
+
+
+
+  dev-deploy:
+    name: Dev-Deployment
+    needs: [docker]
+#    if: github.ref == 'refs/head/dev'
+    uses: ./.github/workflows/reusable-workflow.yaml
+    secrets:
+      mongodb-password: ${{ secrets.MONGO_PASSWORD }}
+    with:
+      environment: development
+      mongodb-uri: ${{ vars.MONGO_URI }}
+
+  prod-deploy:
+    name: Prod-Deployment
+    needs: [dev-deploy]
+    #    if: github.ref == 'refs/head/dev'
+    uses: ./.github/workflows/reusable-workflow.yaml
+    secrets:
+      mongodb-password: ${{ secrets.MONGO_PASSWORD }}
+    with:
+      environment: production
+      mongodb-uri: ${{ vars.MONGO_URI }}
+
+  integration-test:
+    name: Integration Test
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    needs: dev-deploy
+    steps:
+      - name: test
+        run: echo '$GITHUB_CONTEXT'
