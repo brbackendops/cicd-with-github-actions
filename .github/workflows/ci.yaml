@@ -200,24 +200,21 @@ jobs:
         run: |
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/kind/deploy.yaml
           
-      - name: Wait for ingress-nginx-controller pod
+      - name: Wait for ingress-nginx controller to be Ready
         run: |
+          echo "Waiting for controller pod to be Ready..."
           kubectl wait --namespace ingress-nginx \
-              --for=condition=complete job/ingress-nginx-admission-create \
-              --timeout=120s || true
-          kubectl wait --namespace ingress-nginx \
-              --for=condition=complete job/ingress-nginx-admission-patch \
-              --timeout=120s || true
+            --for=condition=Ready pod \
+            --selector=app.kubernetes.io/component=controller \
+            --timeout=300s
 
-      - name: Wait for webhook Job to complete
-        run: |
           echo "Waiting for webhook jobs to complete..."
           kubectl wait --namespace ingress-nginx \
             --for=condition=complete job/ingress-nginx-admission-create \
-            --timeout=120s
+            --timeout=120s || true
           kubectl wait --namespace ingress-nginx \
             --for=condition=complete job/ingress-nginx-admission-patch \
-            --timeout=80s
+            --timeout=120s || true
 
       - name: create secrets
         run: |
@@ -244,11 +241,10 @@ jobs:
           INGRESS_IP: "localhost"
 
       - name: creating deployment
-        run: |          
-          kubectl apply -f kubernetes/development                
-          
-          kubectl get pods -n ${{ vars.NAMESPACE }} -o wide
+        run: |
           kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80 &
+          kubectl apply -f kubernetes/development                          
+          kubectl get pods -n ${{ vars.NAMESPACE }} -o wide
 
   integration-test:
     name: Integration Test
