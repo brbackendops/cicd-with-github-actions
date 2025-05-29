@@ -177,14 +177,15 @@ jobs:
           wget -q -O - 127.0.0.1:3000/live | grep live
 
 
+
+
+
   dev-deploy:
     name: Deployment
     if: github.ref == 'refs/head/dev'
-    needs: docker
     uses: ./.github/workflows/reusable-workflow.yaml
     secrets:
       mongodb-password: ${{ secrets.MONGO_PASSWORD }}
-
 
   integration-test:
     name: Integration Test
