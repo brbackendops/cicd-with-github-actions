@@ -182,7 +182,8 @@ jobs:
 
   dev-deploy:
     name: Deployment
-    if: github.ref == 'refs/head/dev'
+    needs: [docker]
+#    if: github.ref == 'refs/head/dev'
     uses: ./.github/workflows/reusable-workflow.yaml
     secrets:
       mongodb-password: ${{ secrets.MONGO_PASSWORD }}
